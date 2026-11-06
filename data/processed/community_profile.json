@@ -1,0 +1,66 @@
+{
+    "community": {
+      "name": "WillowBrook Senior Living",
+      "business_type": "Fictional senior living community",
+      "location": {
+        "city": "Lagos",
+        "country": "Nigeria",
+        "address": "Demo address - not a real facility"
+      },
+      "description": "A welcoming senior living community designed for older adults seeking comfortable accommodation, social connection, and a supportive daily living environment."
+    },
+    "accommodation": {
+      "options": [
+        {
+          "name": "Private Suite",
+          "description": "Private accommodation for one resident."
+        },
+        {
+          "name": "Shared Suite",
+          "description": "Shared accommodation for residents who prefer a communal living arrangement."
+        }
+      ]
+    },
+    "facilities": [
+      "Dining area",
+      "Landscaped gardens",
+      "Shared social lounge",
+      "Indoor recreational space"
+    ],
+    "services": [
+      "Scheduled meal services",
+      "Housekeeping",
+      "Social and recreational activities",
+      "Community events"
+    ],
+    "care_and_safety": {
+      "medical_care": false,
+      "nursing_care": false,
+      "emergency_medical_services": false,
+      "dementia_care": false,
+      "note": "WillowBrook is a fictional independent-living demonstration. The agent must not claim that medical, nursing, emergency, or specialist care is available."
+    },
+    "pricing": {
+      "currency": "NGN",
+      "status": "Not yet defined",
+      "instruction": "The agent must not quote or invent prices."
+    },
+    "appointments": {
+      "offered": [
+        "Community tours",
+        "Introductory consultations"
+      ],
+      "booking_required": true,
+      "availability_source": "Calendly"
+    },
+    "business_rules": {
+      "never_invent_services": true,
+      "never_invent_prices": true,
+      "never_invent_availability": true,
+      "never_provide_medical_advice": true,
+      "never_claim_unavailable_care_is_offered": true,
+      "unknown_information_response": "I don't have confirmed information about that yet, but I can help arrange a conversation with the community team."
+    },
+    "demo_notice": "All community information is fictional and exists exclusively for software development, testing, and portfolio demonstration."
+  }
+  

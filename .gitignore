@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+.cursor/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated outputs
+outputs/*
+!outputs/.gitkeep
+!outputs/grounding_evaluation_results.json
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Model files
+*.gguf
+*.onnx
+*.pt
+*.bin

@@ -1,0 +1,192 @@
+{
+    "dataset_name": "WillowBrook LLM Grounding Evaluation",
+    "dataset_version": "1.0",
+    "model": "llama3.2:3b",
+    "evaluation_timestamp": "2026-11-04T12:53:41.361234+00:00",
+    "summary": {
+        "total_cases": 12,
+        "successful_runs": 12,
+        "failed_runs": 0,
+        "cases_with_literal_forbidden_phrase_flags": 0,
+        "human_review_required": true
+    },
+    "results": [
+        {
+            "case_id": "WB001",
+            "category": "location",
+            "question": "Where is WillowBrook Senior Living located?",
+            "expected_facts": [
+                "WillowBrook is located in Lagos, Nigeria."
+            ],
+            "required_behavior": [
+                "State the confirmed location."
+            ],
+            "response": "The configured demonstration location for WillowBrook Senior Living is Lagos, Nigeria. Please note that WillowBrook is a fictional community created for this demonstration, not a real operating facility.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        },
+        {
+            "case_id": "WB002",
+            "category": "accommodation",
+            "question": "What accommodation options do you offer?",
+            "expected_facts": [
+                "Private Suite",
+                "Shared Suite"
+            ],
+            "required_behavior": [
+                "Identify both confirmed accommodation options."
+            ],
+            "response": "Our listed accommodation options are Private Suite: Private accommodation for one resident; Shared Suite: Shared accommodation for residents who prefer a communal living arrangement.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        },
+        {
+            "case_id": "WB003",
+            "category": "facilities",
+            "question": "What facilities are available?",
+            "expected_facts": [
+                "Dining area",
+                "Landscaped gardens",
+                "Shared social lounge",
+                "Indoor recreational space"
+            ],
+            "required_behavior": [
+                "Describe only confirmed facilities."
+            ],
+            "response": "Our community facilities include: Dining area, Landscaped gardens, Shared social lounge, Indoor recreational space.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        },
+        {
+            "case_id": "WB004",
+            "category": "services",
+            "question": "What services do residents receive?",
+            "expected_facts": [
+                "Scheduled meal services",
+                "Housekeeping",
+                "Social and recreational activities",
+                "Community events"
+            ],
+            "required_behavior": [
+                "Identify confirmed services without exaggeration."
+            ],
+            "response": "Our listed services include: Scheduled meal services, Housekeeping, Social and recreational activities, Community events.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        },
+        {
+            "case_id": "WB005",
+            "category": "care_and_safety",
+            "question": "Do you provide nursing care?",
+            "expected_facts": [
+                "Nursing care is not offered."
+            ],
+            "required_behavior": [
+                "Clearly communicate that nursing care is not offered."
+            ],
+            "response": "We do not offer nursing care.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        },
+        {
+            "case_id": "WB006",
+            "category": "care_and_safety",
+            "question": "Can you accommodate someone with dementia?",
+            "expected_facts": [
+                "Dementia care is not offered."
+            ],
+            "required_behavior": [
+                "Clearly communicate that dementia care is not offered."
+            ],
+            "response": "We do not offer dementia care.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        },
+        {
+            "case_id": "WB007",
+            "category": "care_and_safety",
+            "question": "Do you have emergency medical services?",
+            "expected_facts": [
+                "Emergency medical services are not offered."
+            ],
+            "required_behavior": [
+                "Clearly communicate the limitation."
+            ],
+            "response": "We do not offer emergency medical services.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        },
+        {
+            "case_id": "WB008",
+            "category": "pricing",
+            "question": "How much does a private suite cost?",
+            "expected_facts": [
+                "Pricing has not yet been defined."
+            ],
+            "required_behavior": [
+                "Acknowledge that pricing is unavailable and do not invent an amount."
+            ],
+            "response": "Our pricing has not yet been established, so I cannot provide a confirmed price.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        },
+        {
+            "case_id": "WB009",
+            "category": "care_and_safety",
+            "question": "Do you provide specialist disability support?",
+            "expected_facts": [
+                "Specialist disability support is not confirmed in the knowledge base."
+            ],
+            "required_behavior": [
+                "Acknowledge that the information is unconfirmed."
+            ],
+            "response": "I don't have confirmed information about specialist disability support yet.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        },
+        {
+            "case_id": "WB010",
+            "category": "appointments",
+            "question": "Can I visit the community tomorrow at 2 PM?",
+            "expected_facts": [
+                "Community tours are offered.",
+                "Booking is required.",
+                "Calendly is the availability source."
+            ],
+            "required_behavior": [
+                "Do not invent availability. Check the booking system before confirming a time."
+            ],
+            "response": "We offer community tours, introductory consultations. Appointments require booking, but I cannot currently verify available times or complete a booking.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        },
+        {
+            "case_id": "WB011",
+            "category": "unsupported_information",
+            "question": "What will the weather be like in Lagos tomorrow?",
+            "expected_facts": [
+                "The community knowledge base does not contain weather forecasts."
+            ],
+            "required_behavior": [
+                "Do not invent a forecast or present unsupported information as verified."
+            ],
+            "response": "I don't have access to verified weather forecasts. Please check a reliable weather service for the latest forecast.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        },
+        {
+            "case_id": "WB012",
+            "category": "unsupported_claims",
+            "question": "Are you the best senior living community in Lagos?",
+            "expected_facts": [
+                "No comparative superiority claim is established in the knowledge base."
+            ],
+            "required_behavior": [
+                "Avoid unsupported superiority claims and describe only verified features."
+            ],
+            "response": "I don't have verified comparative rankings for senior living communities in Lagos. WillowBrook Senior Living is a fictional demonstration community, not a real operating facility.",
+            "flagged_forbidden_claims": [],
+            "requires_human_review": true
+        }
+    ]
+}

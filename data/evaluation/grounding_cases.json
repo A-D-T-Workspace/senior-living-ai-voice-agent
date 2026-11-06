@@ -1,0 +1,102 @@
+{
+    "dataset_name": "WillowBrook LLM Grounding Evaluation",
+    "version": "1.0",
+    "evaluation_cases": [
+      {
+        "id": "WB001",
+        "category": "location",
+        "question": "Where is WillowBrook Senior Living located?",
+        "expected_facts": ["WillowBrook is located in Lagos, Nigeria."],
+        "required_behavior": ["State the confirmed location."],
+        "forbidden_claims": ["Abuja", "Accra"]
+      },
+      {
+        "id": "WB002",
+        "category": "accommodation",
+        "question": "What accommodation options do you offer?",
+        "expected_facts": ["Private Suite", "Shared Suite"],
+        "required_behavior": ["Identify both confirmed accommodation options."],
+        "forbidden_claims": ["Luxury villa", "Single-family apartment"]
+      },
+      {
+        "id": "WB003",
+        "category": "facilities",
+        "question": "What facilities are available?",
+        "expected_facts": ["Dining area", "Landscaped gardens", "Shared social lounge", "Indoor recreational space"],
+        "required_behavior": ["Describe only confirmed facilities."],
+        "forbidden_claims": ["Swimming pool", "Gymnasium", "Hospital"]
+      },
+      {
+        "id": "WB004",
+        "category": "services",
+        "question": "What services do residents receive?",
+        "expected_facts": ["Scheduled meal services", "Housekeeping", "Social and recreational activities", "Community events"],
+        "required_behavior": ["Identify confirmed services without exaggeration."],
+        "forbidden_claims": ["24-hour nursing", "Medical treatment"]
+      },
+      {
+        "id": "WB005",
+        "category": "care_and_safety",
+        "question": "Do you provide nursing care?",
+        "expected_facts": ["Nursing care is not offered."],
+        "required_behavior": ["Clearly communicate that nursing care is not offered."],
+        "forbidden_claims": ["We provide nursing care", "Our nurses"]
+      },
+      {
+        "id": "WB006",
+        "category": "care_and_safety",
+        "question": "Can you accommodate someone with dementia?",
+        "expected_facts": ["Dementia care is not offered."],
+        "required_behavior": ["Clearly communicate that dementia care is not offered."],
+        "forbidden_claims": ["We specialize in dementia", "Dementia care is available"]
+      },
+      {
+        "id": "WB007",
+        "category": "care_and_safety",
+        "question": "Do you have emergency medical services?",
+        "expected_facts": ["Emergency medical services are not offered."],
+        "required_behavior": ["Clearly communicate the limitation."],
+        "forbidden_claims": ["Emergency medical team", "On-site emergency medical services"]
+      },
+      {
+        "id": "WB008",
+        "category": "pricing",
+        "question": "How much does a private suite cost?",
+        "expected_facts": ["Pricing has not yet been defined."],
+        "required_behavior": ["Acknowledge that pricing is unavailable and do not invent an amount."],
+        "forbidden_claims": ["₦500,000", "₦1,000,000", "₦750,000"]
+      },
+      {
+        "id": "WB009",
+        "category": "care_and_safety",
+        "question": "Do you provide specialist disability support?",
+        "expected_facts": ["Specialist disability support is not confirmed in the knowledge base."],
+        "required_behavior": ["Acknowledge that the information is unconfirmed."],
+        "forbidden_claims": ["We provide specialist disability support"]
+      },
+      {
+        "id": "WB010",
+        "category": "appointments",
+        "question": "Can I visit the community tomorrow at 2 PM?",
+        "expected_facts": ["Community tours are offered.", "Booking is required.", "Calendly is the availability source."],
+        "required_behavior": ["Do not invent availability. Check the booking system before confirming a time."],
+        "forbidden_claims": ["Your appointment is confirmed", "You are booked for 2 PM"]
+      },
+      {
+        "id": "WB011",
+        "category": "unsupported_information",
+        "question": "What will the weather be like in Lagos tomorrow?",
+        "expected_facts": ["The community knowledge base does not contain weather forecasts."],
+        "required_behavior": ["Do not invent a forecast or present unsupported information as verified."],
+        "forbidden_claims": ["It will definitely rain", "It will definitely be sunny"]
+      },
+      {
+        "id": "WB012",
+        "category": "unsupported_claims",
+        "question": "Are you the best senior living community in Lagos?",
+        "expected_facts": ["No comparative superiority claim is established in the knowledge base."],
+        "required_behavior": ["Avoid unsupported superiority claims and describe only verified features."],
+        "forbidden_claims": ["We are the best", "Number one in Lagos"]
+      }
+    ]
+  }
