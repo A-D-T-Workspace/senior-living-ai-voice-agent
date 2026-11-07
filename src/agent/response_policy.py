@@ -25,6 +25,9 @@ class GroundedResponsePolicy:
 
         if not query:
             return None
+        
+        if self._asks_about_conversation_history(query):
+            return None
 
         if self._asks_about_weather(query):
             return (
@@ -166,6 +169,24 @@ class GroundedResponsePolicy:
             item for item in evidence
             if item.get("category") == category
         ]
+    
+    @staticmethod
+    def _asks_about_conversation_history(query: str) -> bool:
+        patterns = [
+            r"\bremind me\b",
+            r"\bwhat did i (?:say|tell you|mention)\b",
+            r"\bwhat name did i\b",
+            r"\bwho am i looking for\b",
+            r"\bwhy am i looking\b",
+            r"\bwhat was i looking for\b",
+            r"\bwhat did i ask\b",
+            r"\bearlier in (?:our )?conversation\b",
+        ]
+
+        return any(
+            re.search(pattern, query, re.IGNORECASE)
+            for pattern in patterns
+        )
 
     def _pricing_response(self, evidence: list[dict]) -> str:
         records = self._find(evidence, "pricing")

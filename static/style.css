@@ -1,0 +1,125 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: #f4f7f5;
+    color: #24352d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+main {
+    width: 100%;
+    max-width: 650px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+header h1 {
+    margin-bottom: 6px;
+    font-size: 36px;
+    color: #285c45;
+}
+
+header p {
+    margin-top: 0;
+    color: #718078;
+}
+
+section {
+    background: #ffffff;
+    padding: 36px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+section h2 {
+    margin-top: 0;
+    font-size: 25px;
+}
+
+section > p {
+    color: #66756d;
+    line-height: 1.6;
+}
+
+#status {
+    margin: 28px 0 18px;
+    padding: 12px;
+    background: #edf4ef;
+    border-radius: 8px;
+    color: #285c45;
+    font-size: 14px;
+}
+
+button {
+    padding: 13px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #285c45;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    margin: 0 8px 12px 0;
+}
+
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+button:focus-visible {
+    outline: 3px solid #e0a94b;
+    outline-offset: 3px;
+}
+
+#stopButton {
+    background: #a64b42;
+}
+
+section div h3 {
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+
+section div p {
+    line-height: 1.6;
+    color: #53645a;
+}
+
+section div:has(h3) {
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px solid #edf0ed;
+}
+
+footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 12px;
+    color: #87928b;
+}
+
+@media (max-width: 500px) {
+    section {
+        padding: 24px;
+    }
+
+    header h1 {
+        font-size: 30px;
+    }
+
+    button {
+        width: 100%;
+        margin-right: 0;
+    }
+}

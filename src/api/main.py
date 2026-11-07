@@ -4,7 +4,9 @@ from collections import OrderedDict
 from uuid import uuid4
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import Response
+from fastapi.responses import FileResponse, Response
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 from src.config import get_settings
 from src.conversation.state import create_conversation
@@ -25,6 +27,14 @@ app = FastAPI(
     debug=settings.debug,
 )
 
+STATIC_DIR = Path(__file__).resolve().parents[2] / "static"
+
+app.mount(
+    "/static",
+    StaticFiles(directory=STATIC_DIR),
+    name="static",
+)
+
 scheduling_service = SchedulingService()
 voice_service = VoiceService(
     scheduling_service=scheduling_service
@@ -34,12 +44,7 @@ session_lock = asyncio.Lock()
 
 @app.get("/")
 async def root():
-    return {
-        "project": settings.app_name,
-        "status": "running",
-        "environment": settings.app_env,
-        "version": "0.1.0",
-    }
+    return FileResponse(STATIC_DIR / "index.html")
 
 @app.get("/health")
 async def health_check():
@@ -81,10 +86,21 @@ async def process_voice(
     session_id: str = Form(...),
     audio: UploadFile = File(...),
 ):
-    if audio.content_type != "audio/wav":
+
+    supported_audio_types = {
+        "audio/wav",
+        "audio/x-wav",
+        "audio/webm",
+        "audio/ogg",
+        "audio/mp4",
+    }
+
+    content_type = (audio.content_type or "").split(";")[0].strip().lower()
+
+    if content_type not in supported_audio_types:
         raise HTTPException(
             status_code=415,
-            detail="Only WAV audio uploads are supported.",
+            detail=f"Unsupported audio format: {content_type or 'unknown'}.",
         )
 
     audio_bytes = await audio.read(MAX_AUDIO_SIZE + 1)

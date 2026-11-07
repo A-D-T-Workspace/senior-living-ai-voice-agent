@@ -221,3 +221,23 @@ def test_superiority_question_discloses_fictional_status(policy):
     assert "don't have verified comparative rankings" in response.lower()
     assert "fictional demonstration community" in response.lower()
     assert "not a real operating facility" in response.lower()
+
+def test_conversation_history_question_returns_none(
+    policy, community_evidence
+):
+    response = policy.generate(
+        "Can you remind me what name I gave you and who I am looking for accommodation for?",
+        community_evidence,
+    )
+
+    assert response is None
+
+def test_conversation_history_question_bypasses_accommodation_policy(
+    policy, community_evidence
+):
+    response = policy.generate(
+        "What did I tell you earlier about my accommodation needs?",
+        community_evidence,
+    )
+
+    assert response is None

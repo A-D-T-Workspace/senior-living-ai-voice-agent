@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Speak with the WillowBrook senior living assistant.">
+    <title>WillowBrook | AI Voice Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <main>
+        <header>
+            <h1>WillowBrook</h1>
+            <p>Senior Living Community</p>
+        </header>
+
+        <section>
+            <h2>How can we help you?</h2>
+            <p>
+                Speak with our virtual assistant to learn about
+                accommodation, community facilities, and arranging a tour.
+            </p>
+
+            <div id="status" role="status" aria-live="polite">
+                Connecting...
+            </div>
+
+            <button id="recordButton" disabled>
+                Start speaking
+            </button>
+
+            <button id="stopButton" disabled>
+                Stop and send
+            </button>
+
+            <div>
+                <h3>You said</h3>
+                <p id="callerText">Your message will appear here.</p>
+            </div>
+
+            <div>
+                <h3>Assistant</h3>
+                <p id="agentResponse">
+                    Your assistant's response will appear here.
+                </p>
+            </div>
+        </section>
+
+        <footer>
+            <p>WillowBrook is a fictional demonstration community.</p>
+        </footer>
+    </main>
+    <script src="/static/app.js"></script>
+</body>
+</html>
