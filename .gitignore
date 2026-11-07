@@ -32,6 +32,8 @@ outputs/*
 *.db
 *.sqlite
 *.sqlite3
+*-wal
+*-shm
 
 # Model files
 *.gguf

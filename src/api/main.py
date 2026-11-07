@@ -1,16 +1,16 @@
 import asyncio
 import logging
-from collections import OrderedDict
+from contextlib import asynccontextmanager
+from pathlib import Path
 from uuid import uuid4
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pathlib import Path
 
 from src.config import get_settings
 from src.conversation.state import create_conversation
-from src.conversation.models import ConversationState
+from src.storage.conversation_store import ConversationStore
 from src.voice import VoiceService
 from src.scheduling.service import SchedulingService
 
@@ -18,13 +18,23 @@ settings = get_settings()
 logger = logging.getLogger(__name__)
 
 MAX_AUDIO_SIZE = 10 * 1024 * 1024
-MAX_SESSIONS = 500
+
+conversation_store = ConversationStore()
+
+session_locks: dict[str, asyncio.Lock] = {}
+session_locks_guard = asyncio.Lock()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await conversation_store.initialize()
+    yield
 
 app = FastAPI(
     title=settings.app_name,
     description="Intelligent Voice Sales and Appointment Booking Agent",
     version="0.1.0",
     debug=settings.debug,
+    lifespan=lifespan,
 )
 
 STATIC_DIR = Path(__file__).resolve().parents[2] / "static"
@@ -39,8 +49,13 @@ scheduling_service = SchedulingService()
 voice_service = VoiceService(
     scheduling_service=scheduling_service
 )
-sessions: OrderedDict[str, ConversationState] = OrderedDict()
-session_lock = asyncio.Lock()
+
+async def get_session_lock(session_id: str) -> asyncio.Lock:
+    async with session_locks_guard:
+        if session_id not in session_locks:
+            session_locks[session_id] = asyncio.Lock()
+
+        return session_locks[session_id]
 
 @app.get("/")
 async def root():
@@ -56,12 +71,9 @@ async def health_check():
 @app.post("/sessions")
 async def create_session():
     session_id = str(uuid4())
+    state = create_conversation(session_id)
 
-    async with session_lock:
-        sessions[session_id] = create_conversation(session_id)
-
-        while len(sessions) > MAX_SESSIONS:
-            sessions.popitem(last=False)
+    await conversation_store.save(state)
 
     return {
         "session_id": session_id,
@@ -70,23 +82,21 @@ async def create_session():
 
 @app.get("/sessions/{session_id}")
 async def inspect_session(session_id: str):
-    async with session_lock:
-        state = sessions.get(session_id)
+    state = await conversation_store.get(session_id)
 
-        if state is None:
-            raise HTTPException(
-                status_code=404,
-                detail="Conversation session not found.",
-            )
+    if state is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Conversation session not found.",
+        )
 
-        return state.model_dump(mode="json")
+    return state.model_dump(mode="json")
 
 @app.post("/voice/process")
 async def process_voice(
     session_id: str = Form(...),
     audio: UploadFile = File(...),
 ):
-
     supported_audio_types = {
         "audio/wav",
         "audio/x-wav",
@@ -95,7 +105,12 @@ async def process_voice(
         "audio/mp4",
     }
 
-    content_type = (audio.content_type or "").split(";")[0].strip().lower()
+    content_type = (
+        (audio.content_type or "")
+        .split(";")[0]
+        .strip()
+        .lower()
+    )
 
     if content_type not in supported_audio_types:
         raise HTTPException(
@@ -117,8 +132,10 @@ async def process_voice(
             detail="Audio file exceeds the 10 MB limit.",
         )
 
+    session_lock = await get_session_lock(session_id)
+
     async with session_lock:
-        state = sessions.get(session_id)
+        state = await conversation_store.get(session_id)
 
         if state is None:
             raise HTTPException(
@@ -126,27 +143,27 @@ async def process_voice(
                 detail="Conversation session not found.",
             )
 
-        sessions.move_to_end(session_id)
+        try:
+            result = await voice_service.process_audio(
+                state,
+                audio_bytes,
+            )
 
-    try:
-        result = await voice_service.process_audio(
-            state,
-            audio_bytes,
-        )
+            await conversation_store.save(state)
 
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=422,
-            detail=str(exc),
-        ) from exc
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=422,
+                detail=str(exc),
+            ) from exc
 
-    except Exception as exc:
-        logger.exception("Voice processing failed.")
+        except Exception as exc:
+            logger.exception("Voice processing failed.")
 
-        raise HTTPException(
-            status_code=500,
-            detail="Voice processing failed. Please try again.",
-        ) from exc
+            raise HTTPException(
+                status_code=500,
+                detail="Voice processing failed. Please try again.",
+            ) from exc
 
     return Response(
         content=result["audio"],

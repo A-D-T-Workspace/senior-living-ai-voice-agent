@@ -15,8 +15,22 @@ class FakeVoiceService:
         }
 
 @pytest.fixture
-def client(monkeypatch):
-    main.sessions.clear()
+def client(monkeypatch, tmp_path):
+    from src.storage.conversation_store import ConversationStore
+
+    store = ConversationStore(
+        f"sqlite:///{tmp_path / 'test_api.db'}"
+    )
+
+    import asyncio
+    asyncio.run(store.initialize())
+
+    monkeypatch.setattr(
+        main,
+        "conversation_store",
+        store,
+    )
+
     monkeypatch.setattr(
         main,
         "voice_service",
