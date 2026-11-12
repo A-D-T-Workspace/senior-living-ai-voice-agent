@@ -13,6 +13,8 @@ from src.conversation.state import create_conversation
 from src.storage.conversation_store import ConversationStore
 from src.voice import VoiceService
 from src.scheduling.service import SchedulingService
+from datetime import timedelta
+from livekit.api import AccessToken, VideoGrants
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -78,6 +80,58 @@ async def create_session():
     return {
         "session_id": session_id,
         "status": "active",
+    }
+
+@app.post("/sessions/{session_id}/livekit-token")
+async def create_livekit_token(session_id: str):
+    if not all([
+        settings.livekit_url,
+        settings.livekit_api_key,
+        settings.livekit_api_secret,
+    ]):
+        raise HTTPException(
+            status_code=503,
+            detail="LiveKit is not configured.",
+        )
+
+    state = await conversation_store.get(session_id)
+
+    if state is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Conversation session not found.",
+        )
+
+    if state.status != "active":
+        raise HTTPException(
+            status_code=409,
+            detail="Conversation session is not active.",
+        )
+
+    identity = f"visitor-{uuid4().hex}"
+
+    token = (
+        AccessToken(
+            settings.livekit_api_key,
+            settings.livekit_api_secret,
+        )
+        .with_identity(identity)
+        .with_ttl(timedelta(minutes=15))
+        .with_grants(
+            VideoGrants(
+                room_join=True,
+                room=session_id,
+                can_publish=True,
+                can_subscribe=True,
+                can_publish_data=False,
+            )
+        )
+    )
+
+    return {
+        "server_url": settings.livekit_url,
+        "participant_token": token.to_jwt(),
+        "identity": identity,
     }
 
 @app.get("/sessions/{session_id}")

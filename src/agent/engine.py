@@ -1,5 +1,6 @@
 import re
 import logging
+import httpx
 
 from src.agent.llm import OllamaClient
 from src.agent.response_policy import GroundedResponsePolicy
@@ -216,12 +217,26 @@ class ConversationEngine:
             },
         )
 
-        response = await self.llm.chat(messages)
+        try:
+            response = await self.llm.chat(messages)
 
-        await self._extract_discovery_answers(
-            state,
-            caller_message,
-        )
+        except (httpx.HTTPError, RuntimeError):
+            logger.exception(
+                "Main conversation LLM failed. Using safe fallback."
+            )
+
+            response = (
+                "I'm sorry, I'm having trouble accessing our "
+                "information system right now. I don't want to give "
+                "you unconfirmed information. Please contact the "
+                "community team for assistance."
+            )
+
+        else:
+            await self._extract_discovery_answers(
+                state,
+                caller_message,
+            )
 
         if self._contains_unsupported_booking_claim(response):
             response = (

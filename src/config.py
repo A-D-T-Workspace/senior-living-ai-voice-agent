@@ -30,6 +30,10 @@ class Settings(BaseSettings):
 
     secret_key: str = "development-only-change-me"
 
+    livekit_url: str = ""
+    livekit_api_key: str = ""
+    livekit_api_secret: str = ""
+
 @lru_cache
 def get_settings() -> Settings:
     return Settings()

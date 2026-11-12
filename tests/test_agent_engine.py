@@ -510,3 +510,25 @@ async def test_engine_calls_extractor_after_main_llm():
     await engine.respond(state, "Hello.")
 
     assert extractor.called_after_main_llm is True
+
+@pytest.mark.asyncio
+async def test_engine_handles_main_llm_failure():
+    class FailingLLMClient:
+        async def chat(self, *messages):
+            raise RuntimeError("Ollama is unavailable.")
+
+    engine = make_engine(
+        llm_client=FailingLLMClient(),
+    )
+
+    state = create_conversation("main-llm-failure-test")
+
+    response = await engine.respond(
+        state,
+        "Hello, I would like to learn about your community.",
+    )
+
+    assert isinstance(response, str)
+    assert len(response.strip()) > 0
+    assert len(state.messages) == 2
+    assert state.messages[1].role == "assistant"

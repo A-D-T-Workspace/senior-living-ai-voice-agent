@@ -9,7 +9,7 @@ from src.config import get_settings
 logger = logging.getLogger(__name__)
 
 class AudioTranscriber:
-    """Transcribes caller audio using faster-whisper."""
+    """Transcribes caller audio and returns detected language metadata."""
 
     def __init__(self, model=None):
         self._model = model
@@ -24,13 +24,13 @@ class AudioTranscriber:
             )
         return self._model
 
-    def _transcribe(self, audio_bytes: bytes) -> str:
+    def _transcribe_with_language(self, audio_bytes: bytes) -> dict:
         if not audio_bytes:
             raise ValueError("Audio input cannot be empty.")
 
         model = self._load_model()
 
-        segments, _ = model.transcribe(
+        segments, info = model.transcribe(
             BytesIO(audio_bytes),
             beam_size=5,
             vad_filter=True,
@@ -45,8 +45,30 @@ class AudioTranscriber:
         if not text:
             raise ValueError("No speech could be detected in the audio.")
 
-        return text
+        language = info.language
+
+        logger.info(
+            "Transcription completed. Detected language: %s",
+            language,
+        )
+
+        return {
+            "text": text,
+            "language": language,
+        }
+
+    def _transcribe(self, audio_bytes: bytes) -> str:
+        """Preserve the existing synchronous plain-text interface."""
+        return self._transcribe_with_language(audio_bytes)["text"]
+
+    async def transcribe_with_language(self, audio_bytes: bytes) -> dict:
+        """Transcribe audio and return text with detected language."""
+        return await asyncio.to_thread(
+            self._transcribe_with_language,
+            audio_bytes,
+        )
 
     async def transcribe(self, audio_bytes: bytes) -> str:
-        """Transcribe audio without blocking the async event loop."""
-        return await asyncio.to_thread(self._transcribe, audio_bytes)
+        """Preserve the existing asynchronous plain-text interface."""
+        result = await self.transcribe_with_language(audio_bytes)
+        return result["text"]
