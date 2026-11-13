@@ -4,7 +4,7 @@ from src.agent.livekit_llm import ConversationEngineLLM
 from src.conversation.state import create_conversation
 
 class FakeConversationEngine:
-    async def respond(self, state, caller_message):
+    async def respond(self, state, caller_message, language="en"):
         assert caller_message == "I would like to learn about your community."
         return "Of course. I would be happy to tell you about our community."
 

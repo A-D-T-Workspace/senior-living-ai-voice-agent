@@ -159,6 +159,7 @@ class ConversationEngine:
         self,
         state: ConversationState,
         caller_message: str,
+        language: str = "en",
     ) -> str:
         """Retrieve verified knowledge and generate a grounded response."""
 
@@ -169,6 +170,15 @@ class ConversationEngine:
             raise ValueError("Conversation is not active.")
 
         caller_message = caller_message.strip()
+
+        language_names = {
+            "en": "English",
+            "yo": "Yoruba",
+            "ig": "Igbo",
+            "ha": "Hausa",
+        }
+
+        language_name = language_names.get(language, "English")
 
         add_message(state, "user", caller_message)
 
@@ -213,6 +223,9 @@ class ConversationEngine:
                     "For ordinary conversational questions, respond naturally. "
                     "Avoid unnecessary explanations, repeated disclaimers, "
                     "and unrelated suggestions."
+                    f" LANGUAGE REQUIREMENT: Respond in {language_name}. "
+                    "Use natural, fluent language and preserve the caller's meaning. "
+                    "Do not switch to English unless the caller does."
                 ),
             },
         )

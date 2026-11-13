@@ -15,11 +15,13 @@ class ConversationEngineLLM(llm.LLM):
         conversation_engine: ConversationEngine,
         state: ConversationState,
         conversation_store: ConversationStore | None = None,
+        language_context: dict | None = None,
     ):
         super().__init__()
         self._engine = conversation_engine
         self._state = state
         self._conversation_store = conversation_store
+        self._language_context = language_context or {"language": "en"}
 
     @property
     def model(self) -> str:
@@ -67,6 +69,7 @@ class ConversationEngineLLMStream(llm.LLMStream):
         response = await self._llm._engine.respond(
             self._llm._state,
             latest_user_message,
+            language=self._llm._language_context.get("language", "en"),
         )
 
         if self._llm._conversation_store is not None:

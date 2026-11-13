@@ -79,10 +79,13 @@ async def entrypoint(ctx: JobContext) -> None:
         scheduling_service=scheduling_service,
     )
 
+    language_context = {"language": "en"}
+
     conversation_llm = ConversationEngineLLM(
         conversation_engine=engine,
         state=state,
         conversation_store=store,
+        language_context=language_context,
     )
 
     session = AgentSession(
@@ -96,6 +99,20 @@ async def entrypoint(ctx: JobContext) -> None:
     )
 
     agent = WillowBrookVoiceAgent()
+
+    def on_user_input_transcribed(event):
+        if event.is_final and event.language:
+            language_context["language"] = str(event.language)
+
+            logger.info(
+                "Caller language updated: %s",
+                language_context["language"],
+            )
+
+    session.on(
+        "user_input_transcribed",
+        on_user_input_transcribed,
+    )
 
     shutdown_event = asyncio.Event()
 

@@ -532,3 +532,37 @@ async def test_engine_handles_main_llm_failure():
     assert len(response.strip()) > 0
     assert len(state.messages) == 2
     assert state.messages[1].role == "assistant"
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("language", "language_name"),
+    [
+        ("en", "English"),
+        ("yo", "Yoruba"),
+        ("ig", "Igbo"),
+        ("ha", "Hausa"),
+    ],
+)
+async def test_engine_instructs_llm_to_respond_in_detected_language(
+    language,
+    language_name,
+):
+    llm = RecordingLLMClient()
+
+    engine = make_engine(llm_client=llm)
+    state = create_conversation("multilingual-test")
+
+    await engine.respond(
+        state,
+        "I am looking for a senior living community.",
+        language=language,
+    )
+
+    messages = llm.received_messages[0]
+
+    assert any(
+        language_name in message["content"]
+        and "respond" in message["content"].lower()
+        for message in messages
+        if message["role"] == "system"
+    )
